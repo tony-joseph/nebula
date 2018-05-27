@@ -10,6 +10,8 @@ class UserManager(BaseUserManager):
 
     def _create_user(self, email, first_name, password=None, **extra_fields):
         email = self.normalize_email(email)
+        if not extra_fields.get('gender', None):
+            extra_fields['gender'] = self.model.GENDER_NOT_SPECIFIED
         user = self.model(email=email, first_name=first_name, **extra_fields)
         user.set_password(password)
         user.save()
