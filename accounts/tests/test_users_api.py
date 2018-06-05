@@ -138,3 +138,16 @@ class UserAPITestCase(TestCase):
         self.assertTrue(str(self.user1.id) in user_ids)
         self.assertTrue(str(self.user2.id) in user_ids)
         self.assertTrue(str(self.user3.id) in user_ids)
+
+        # Test search
+        request = client.get(
+            "{}?search={}".format(reverse('accounts:users-list'), self.user1.first_name),
+        )
+        self.assertEqual(request.status_code, status.HTTP_200_OK)
+        user_ids = map(
+            lambda val: val['id'],
+            request.json()['results'],
+        )
+        self.assertTrue(str(self.user1.id) in user_ids)
+        self.assertTrue(str(self.user2.id) not in user_ids)
+        self.assertTrue(str(self.user3.id) not in user_ids)
